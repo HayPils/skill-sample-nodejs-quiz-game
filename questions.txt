@@ -1,7 +1,7 @@
-﻿Game Questions
+Game Questions
 
 var data = [
-                {Question: “If you have played the piano, do you remember practicing?”},
+        {Question: "If you have played the piano, do you remember practicing?"},
 		{Question: "If you have driven a tractor, do you remember sitting in the driver seat?"},
 		{Question: "If you have owned a pet, do you remember the color of that pet?"},
 		{Question: "If you have been to a foreign country, do you remember a food you tried there?"},
