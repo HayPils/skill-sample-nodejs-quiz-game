@@ -1,12 +1,5 @@
-'use strict';
 const Alexa = require('alexa-sdk');
 
-//=========================================================================================================================================
-//TODO: The items below this comment need your attention
-//=========================================================================================================================================
-
-//Replace with your app ID (OPTIONAL).  You can find this value at the top of your skill's page on http://developer.amazon.com.
-//Make sure to enclose your value in quotes, like this:  const APP_ID = "amzn1.ask.skill.bb4045e6-b3e8-4133-b650-72923c5980f1";
 const APP_ID = undefined;
 
 const data = [
@@ -25,61 +18,33 @@ const data = [
 
             ];
 
-const quizHandlers = Alexa.CreateStateHandler(states.QUIZ,{
+const handlers = {
+    "LaunchRequest": function() {
+        this.emit("Welcome to Rememoir");
+     },
     "AskQuestion": function() {
-        if (this.attributes["counter"] == 0)
-        {
-            this.attributes["response"] = START_QUIZ_MESSAGE + " ";
-        }
-
         let random = getRandom(0, data.length-1);
-        let item = data[random];
+        let question = data[random].Question;
 
-        let propertyArray = Object.getOwnPropertyNames(item);
-        let property = propertyArray[getRandom(1, propertyArray.length-1)];
+        //this.attributes["questionItem"] = question;
 
-        this.attributes["quizitem"] = item;
-        this.attributes["quizproperty"] = property;
-        this.attributes["counter"]++;
+        //let speech = this.attributes["response"] + question;
 
-        let question = getQuestion(this.attributes["counter"], property, item);
-        let speech = this.attributes["response"] + question;
-
-        this.emit(":ask", speech, question);
+        this.emit(":ask", question, question);
     },
-    "AnswerIntent": function() {
-        let response = "";
-        let speechOutput = "";
-        let item = this.attributes["quizitem"];
-        let property = this.attributes["quizproperty"]
-
-        let correct = compareSlots(this.event.request.intent.slots, item[property]);
-
-        if (correct)
-        {
-            response = getSpeechCon(true);
-            this.attributes["quizscore"]++;
-        }
-        else
-        {
-            response = getSpeechCon(false);
-        }
-
-        response += getAnswer(property, item);
-
-        if (this.attributes["counter"] < 10)
-        {
-            response += getCurrentScore(this.attributes["quizscore"], this.attributes["counter"]);
-            this.attributes["response"] = response;
-            this.emitWithState("AskQuestion");
-        }
-        else
-        {
-            response += getFinalScore(this.attributes["quizscore"], this.attributes["counter"]);
-            speechOutput = response + " " + EXIT_SKILL_MESSAGE;
-
-            this.response.speak(speechOutput);
-            this.emit(":responseReady");
-        }
+    "AMAZON.YesIntent": function() {
+        this.emit(":tell", "That sounds like a hoot and a half")
     }
-});
+};
+
+function getRandom(min, max)
+{
+    return Math.floor(Math.random() * (max-min+1)+min);
+}
+
+exports.handler = (event, context) => {
+    const alexa = Alexa.handler(event, context);
+    alexa.appId = APP_ID;
+    alexa.registerHandlers(handlers);
+    alexa.execute();
+};

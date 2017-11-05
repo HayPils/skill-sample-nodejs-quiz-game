@@ -204,7 +204,7 @@ const handlers = {
 };
 
 const startHandlers = Alexa.CreateStateHandler(states.START,{
-    "Start": function() {
+    "StartGame": function() {
         this.response.speak(WELCOME_MESSAGE).listen(HELP_MESSAGE);
         this.emit(":responseReady");
     },
